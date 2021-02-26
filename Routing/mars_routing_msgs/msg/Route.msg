@@ -1,0 +1,4 @@
+mars_common_msgs/Id path_id
+mars_common_msgs/Id agent_id
+mars_agent_physical_robot_msgs/RobotAgentProperties robot_agent_properties
+mars_routing_msgs/Step[] route

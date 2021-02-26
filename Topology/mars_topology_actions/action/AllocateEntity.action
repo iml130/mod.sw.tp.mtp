@@ -1,0 +1,17 @@
+# goal
+mars_common_msgs/Id agent_id
+mars_common_msgs/Id path_id
+mars_common_msgs/Id topology_entity_id
+mars_topology_msgs/TimeInterval allocation_interval
+---
+# result
+mars_common_msgs/Id agent_id
+mars_common_msgs/Id path_id
+mars_common_msgs/Id topology_entity_id
+mars_common_msgs/Result result
+---
+# feedback
+mars_common_msgs/Id agent_id
+mars_common_msgs/Id path_id
+mars_common_msgs/Id topology_entity_id
+uint8 position_in_queue

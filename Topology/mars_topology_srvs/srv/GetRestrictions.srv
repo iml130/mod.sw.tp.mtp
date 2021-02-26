@@ -1,0 +1,16 @@
+mars_common_msgs/Id entity_id
+---
+float32 max_linear_velocity
+float32 max_angular_velocity
+
+float32 max_linear_acceleration
+float32 max_angular_acceleration
+
+# Max total weight on the topology entity
+float32 max_total_weight
+
+float32 max_height
+
+mars_agent_physical_robot_msgs/VehicleType[] forbidden_vehicle_types
+
+mars_topology_msgs/HazardType[] forbidden_hazard_types

@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_name" default="ERROR" />
+  <arg name="physical_agent_id" default="" />
+  <arg name="physical_agent_description" default="00000000-0000-0000-0000-000000000000" />
+  <arg name="current_topology_entity_id" default="00000000-0000-0000-0000-000000000000" />
+  <arg name="current_topology_entity_type" default="10" />
+  <arg name="parking_spot_entity_id" default="00000000-0000-0000-0000-000000000000" />
+  <arg name="parking_spot_entity_type" default="10" />
+  <arg name="parking_allowed" default="false" />
+  <arg name="node_name" default="" />
+
+  <arg name="topic_name_action_assignment" default="action_assignment" />
+  <arg name="topic_name_motion_assignment" default="motion_assignment" />
+  <arg name="topic_name_robot_description" default="robot_description" />
+  <arg name="topic_name_assignment_state" default="assignment_state" />
+  <arg name="topic_name_robot_state" default="robot_state" />
+  <arg name="topic_name_battery_state" default="battery_state" />
+  <arg name="topic_name_current_position" default="current_position" />
+  <arg name="topic_name_current_velocity" default="current_velocity" />
+  <arg name="topic_name_current_motion" default="current_motion" />
+  <arg name="topic_name_actual_state" default="actual_state" />
+  <arg name="topic_name_init_pose" default="init_pose" />
+
+  <arg name="physical_robot_namespace" default="mars/agent/physical" />
+
+  <node name="$(arg node_name)" pkg="mars_agent_logical_agv" type="mars_agent_logical_agv" output="screen" ns="mars/agent/logical/">
+
+    <!-- Node settings -->
+    <!-- log level can be 'debug', 'info', 'warn', 'error' or 'fatal' -->
+    <param name="log_level" value="info" />
+    <param name="node_rate" value="20" />
+
+    <param name="physical_agent_id" value="$(arg physical_agent_id)" />
+    <param name="physical_agent_description" value="$(arg physical_agent_description)" />
+
+    <!-- building namespace for mars topology nodes: -->
+    <!-- structure of the namespace: global_prefix + sub_prefix + node_id = ns -->
+    <!-- Note: the node_id is automatically added to the namespace -->
+    <!-- Every prefix must be followed by  '/'   e.g. prefix/ -->
+    <!-- Global prefix of a node -->
+    <param name="ns_prefix_global_node" value="mars/agent/logical/" />
+    <param name="ns_prefix_global_robot" value="/mars/agent/physical/" />
+    <!-- Node classes -->
+    <param name="mars_node_class" value="robot_" />
+    <param name="mars_node_class_robot" value="robot_" />
+
+    <!-- service names -->
+    <param name="service_name_add_move_order" value="add_move_order" />
+    <param name="service_name_add_transport_order" value="add_transport_order" />
+    <!-- NOTE: Service orders are currently not supported -->
+    <!-- arg name="service_name_add_service_order" value="add_service_order" / -->
+    <param name="service_name_get_order_bid" value="get_order_bid" />
+    <param name="service_manual_trigger" value="manual_action_done" />
+
+    <!-- topic names -->
+    <param name="topic_name_order_status" value="order_status" />
+
+    <!-- Parameters to set the robot topic names -->
+    <param name="topic_cancel_order" value="cancel_order" />
+
+    <param name="topic_action_assignment" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_action_assignment)" />
+    <param name="topic_motion_assignment" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_motion_assignment)" />
+    <param name="topic_robot_description" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_robot_description)" />
+
+    <param name="topic_assignment_state" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_assignment_state)" />
+    <param name="topic_robot_state" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_robot_state)" />
+    <param name="topic_battery_state" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_battery_state)" />
+    <param name="topic_current_position" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_current_position)" />
+    <param name="topic_current_velocity" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_current_velocity)" />
+    <param name="topic_current_motion" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_current_motion)" />
+    <param name="topic_actual_state" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_actual_state)" />
+    <param name="topic_init_pose" value="/$(arg physical_robot_namespace)/$(arg robot_name)/$(arg topic_name_init_pose)" />
+
+    <param name="topology_namespace" value="/topology"/>
+
+    <param name="current_topology_entity_id" value="$(arg current_topology_entity_id)" />
+    <param name="current_topology_entity_type" value="$(arg current_topology_entity_type)" type="string" />
+
+    <param name="parking_spot_entity_id" value="$(arg parking_spot_entity_id)" />
+    <param name="parking_spot_entity_type" value="$(arg parking_spot_entity_type)" type="string" />
+
+    <param name="parking_allowed" value="$(arg parking_allowed)" type="string" />
+
+    <param name="actionlib_client_sub_queue_size" value="100" />
+    <param name="actionlib_client_pub_queue_size" value="100" />
+
+  </node>
+</launch>

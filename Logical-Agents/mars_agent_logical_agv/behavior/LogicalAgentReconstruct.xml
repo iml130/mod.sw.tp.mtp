@@ -1,0 +1,637 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="LogicalAgent">
+    <!-- ////////// -->
+    <BehaviorTree ID="AllocateStrategy_Entity">
+        <SequenceStar name="Start Allocate behavior entity based">
+            <SetBlackboard name="Start index of an order" output_key="motion_assignment_index" value="1"/>
+            <SetBlackboard name="Start value of allocations hold" output_key="allocation_count" value="1"/>
+            <SetBlackboard name="Max allocations which can be hold at a time" output_key="allocation_limit" value="8"/>
+            <Parallel threshold="2">
+                <Repeat name="Deallocate" num_cycles="{route_step_count}">
+                    <SequenceStar name="Deallocation of topology nodes">
+                        <Action ID="DeallocateEntity" agent_id="{agent_id}" allocation_count="{allocation_count}" current_topology_entity="{current_topology_entity}" name="Try deallocating target, requires ROS Subscriber to AssignmentStatus" physical_agent_namespace="{physical_agent_namespace}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}"/>
+                    </SequenceStar>
+                </Repeat>
+                <SequenceStar>
+                    <SetBlackboard output_key="allocation_done" value="false"/>
+                    <Decorator ID="RepeatUntilDone" done_status="{allocation_done}" name="Allocate until we reached the end of the current step">
+                        <SequenceStar name="Allocation of topology nodes">
+                            <Action ID="AllocateEntity" agent_id="{agent_id}" allocation_count="{allocation_count}" allocation_done="allocation_done" allocation_limit="{allocation_limit}" name="Allocating next target, if limit not reached" num_new_allocated="{num_newly_allocated}" robot_properties="{robot_properties}" route_allocate_step="{route_allocate_step}" route_id="{route_id}"/>
+                            <Action ID="PublishMotionAssignmentsToTarget" motion_assignment_index="{motion_assignment_index}" num_new_allocated="{num_newly_allocated}" route_allocate_step="{route_allocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" topic_name_motion_assignment="{topic_name_motion_assignment}"/>
+                        </SequenceStar>
+                    </Decorator>
+                </SequenceStar>
+            </Parallel>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="InitializeLogicalAgent">
+        <SequenceStar name="Import ROS parameters">
+            <SequenceStar name="Set Agent IDs">
+                <Action ID="ImportROSParameter" name="physical_agent_id" output_key="{physical_agent_id}" parameter="physical_agent_id"/>
+                <Action ID="SetId" id="{agent_id}" name="Use physical agent Id as logical agent Id" uuid_string="{physical_agent_id}"/>
+            </SequenceStar>
+            <SequenceStar name="Set initial topology entity">
+                <Action ID="ImportROSParameter" name="current_topology_entity_id" output_key="{current_topology_entity_uuid_string}" parameter="current_topology_entity_id"/>
+                <Action ID="ImportROSParameter" output_key="{current_topology_entity_type}" parameter="current_topology_entity_type"/>
+                <Action ID="SetId" id="{current_topology_entity_id}" uuid_string="{current_topology_entity_uuid_string}"/>
+                <Action ID="SetTopologyEntity" entity="{current_topology_entity}" entity_id="{current_topology_entity_id}" entity_type="{current_topology_entity_type}"/>
+            </SequenceStar>
+            <SequenceStar name="Set parking spot topology entity">
+                <Action ID="ImportROSParameter" output_key="{parking_allowed_string}" parameter="parking_allowed"/>
+                <Action ID="StringToBool" input="{parking_allowed_string}" output="{parking_allowed}"/>
+                <Fallback name="Safty Fallback">
+                    <SequenceStar>
+                        <Condition ID="IsTrue" input="{parking_allowed}"/>
+                        <Action ID="ImportROSParameter" name="parking_spot_entity_id" output_key="{parking_spot_entity_uuid_string}" parameter="parking_spot_entity_id"/>
+                        <Action ID="ImportROSParameter" output_key="{parking_spot_entity_type}" parameter="parking_spot_entity_type"/>
+                        <Action ID="SetId" id="{parking_spot_entity_id}" uuid_string="{parking_spot_entity_uuid_string}"/>
+                        <Action ID="SetTopologyEntity" entity="{parking_spot_entity}" entity_id="{parking_spot_entity_id}" entity_type="{parking_spot_entity_type}"/>
+                    </SequenceStar>
+                    <SetBlackboard output_key="placeholder" value="abc"/>
+                </Fallback>
+            </SequenceStar>
+            <SequenceStar name="Set namespaces">
+                <Action ID="ImportROSParameter" name="ns_prefix_global_node" output_key="{logical_agent_namespace}" parameter="ns_prefix_global_node"/>
+                <Action ID="ImportROSParameter" name="ns_prefix_global_robot" output_key="{physical_agent_namespace}" parameter="ns_prefix_global_robot"/>
+            </SequenceStar>
+            <SequenceStar name="Set service names">
+                <Action ID="ImportROSParameter" name="service_name_add_move_order" output_key="{service_name_add_move_order}" parameter="service_name_add_move_order"/>
+                <Action ID="ImportROSParameter" name="service_name_add_transport_order" output_key="{service_name_add_transport_order}" parameter="service_name_add_transport_order"/>
+            </SequenceStar>
+            <SequenceStar name="Set topic names">
+                <Action ID="ImportROSParameter" name="topic_action_assignment" output_key="{topic_name_action_assignment}" parameter="topic_action_assignment"/>
+                <Action ID="ImportROSParameter" name="topic_motion_assignment" output_key="{topic_name_motion_assignment}" parameter="topic_motion_assignment"/>
+                <Action ID="ImportROSParameter" name="topic_robot_description" output_key="{topic_name_robot_properties}" parameter="topic_robot_description"/>
+                <Action ID="ImportROSParameter" name="topic_assignment_state" output_key="{topic_name_assignment_status}" parameter="topic_assignment_state"/>
+                <Action ID="ImportROSParameter" name="topic_current_motion" output_key="{topic_name_current_motion}" parameter="topic_current_motion"/>
+                <Action ID="ImportROSParameter" output_key="{topic_name_order_status}" parameter="topic_name_order_status"/>
+            </SequenceStar>
+            <SequenceStar name="Init Order status">
+                <SetBlackboard output_key="order_state" value="0"/>
+                <SetBlackboard output_key="order_type" value="0"/>
+            </SequenceStar>
+            <SequenceStar name="Init flags">
+                <SetBlackboard output_key="parking_flag" value="False"/>
+                <SetBlackboard output_key="new_order_flag" value="False"/>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="LogicalAgent">
+        <SequenceStar name="Import ROS Parameters and process queue">
+            <SubTree ID="InitializeLogicalAgent" agent_id="agent_id" current_topology_entity="current_topology_entity" logical_agent_namespace="logical_agent_namespace" new_order_flag="new_order_flag" order_state="order_state" order_type="order_type" parking_allowed="parking_allowed" parking_flag="parking_flag" parking_spot_entity="parking_spot_entity" physical_agent_namespace="physical_agent_namespace" service_name_add_move_order="service_name_add_move_order" service_name_add_transport_order="service_name_add_transport_order" topic_name_action_assignment="topic_name_action_assignment" topic_name_assignment_status="topic_name_assignment_status" topic_name_current_motion="topic_name_current_motion" topic_name_motion_assignment="topic_name_motion_assignment" topic_name_robot_properties="topic_name_robot_properties"/>
+            <Parallel threshold="2">
+                <Decorator ID="RepeatOncePerTick">
+                    <SequenceStar>
+                        <Fallback name="Choose behavior">
+                            <SequenceStar name="With parking">
+                                <Condition ID="IsTrue" input="{parking_allowed}" name="Is parking allowed ?"/>
+                                <Parallel name="Wait till we get a new order or the parking trigger" threshold="1">
+                                    <Decorator ID="RepeatUntilSuccessful">
+                                        <Action ID="SetCurrentOrder" new_order_flag="{new_order_flag}" order="{current_order}" order_id="{current_order_id}" service_name_add_move_order="{service_name_add_move_order}" service_name_add_transport_order="{service_name_add_transport_order}"/>
+                                    </Decorator>
+                                    <SequenceStar>
+                                        <Action ID="WaitForNSeconds" wait_duration="20"/>
+                                        <SetBlackboard name="Set parking flag" output_key="parking_flag" value="True"/>
+                                    </SequenceStar>
+                                </Parallel>
+                            </SequenceStar>
+                            <SequenceStar name="without parking">
+                                <SetBlackboard name="set parking flag" output_key="parking_flag" value="False"/>
+                                <Decorator ID="RepeatUntilSuccessful">
+                                    <Action ID="SetCurrentOrder" new_order_flag="{new_order_flag}" order="{current_order}" order_id="{current_order_id}" service_name_add_move_order="{service_name_add_move_order}" service_name_add_transport_order="{service_name_add_transport_order}"/>
+                                </Decorator>
+                            </SequenceStar>
+                        </Fallback>
+                        <Fallback name="Parking or process order">
+                            <Sequence>
+                                <Condition ID="IsTrue" input="{parking_flag}" name="Shall we park ?"/>
+                                <Fallback>
+                                    <Condition ID="AreTopologyEntitiesEqual" first_entity="{current_topology_entity}" name="Are we already parking" second_entity="{parking_spot_entity}"/>
+                                    <SubTree ID="Parking" agent_id="agent_id" current_topology_entity="current_topology_entity" parking_spot="parking_spot_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" topic_name_motion_assignment="topic_name_motion_assignment" topic_name_robot_properties="topic_name_robot_properties"/>
+                                </Fallback>
+                                <SetBlackboard name="Reset parking flag" output_key="parking_flag" value="False"/>
+                            </Sequence>
+                            <SequenceStar>
+                                <Condition ID="IsTrue" input="{new_order_flag}"/>
+                                <SubTree ID="Process_Order" agent_id="agent_id" current_order="current_order" current_order_id="current_order_id" current_topology_entity="current_topology_entity" order_state="order_state" order_status="order_status" order_type="order_type" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_twist="robot_twist" service_name_add_move_order="service_name_add_move_order" service_name_add_transport_order="service_name_add_transport_order" topic_name_action_assignment="topic_name_action_assignment" topic_name_assignment_status="topic_name_assignment_status" topic_name_current_motion="topic_name_current_motion" topic_name_motion_assignment="topic_name_motion_assignment" topic_name_robot_properties="topic_name_robot_properties"/>
+                                <SetBlackboard name="Reset order flag" output_key="new_order_flag" value="False"/>
+                            </SequenceStar>
+                        </Fallback>
+                    </SequenceStar>
+                </Decorator>
+                <Decorator ID="RepeatOncePerTick">
+                    <Action ID="SetCurrentMotion" name="Set the Pose and Twist of the robot" pose="{robot_pose}" topic_name_motion="{topic_name_current_motion}" twist="{robot_twist}"/>
+                </Decorator>
+            </Parallel>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="Parking">
+        <SequenceStar>
+            <Action ID="SetRobotProperties" robot_properties="{robot_properties}" topic_name_robot_properties="{topic_name_robot_properties}"/>
+            <Action ID="SetDuration" duration="-1.0" reservation_duration="{reservation_duration}"/>
+            <Action ID="SetCurrentTime" time="{current_time}"/>
+            <Action ID="PlanRoute" agent_id="{agent_id}" destination="{parking_spot}" destination_reservation_duration="{reservation_duration}" origin="{current_topology_entity}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route="{route}" route_allocate_step="{route_allocate_step}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" router="/mars/routing/carp_11111111111111111111111111111111" time="{current_time}"/>
+            <SubTree ID="AllocateStrategy_Entity" agent_id="agent_id" current_topology_entity="current_topology_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" route_allocate_step="route_allocate_step" route_deallocate_step="route_deallocate_step" route_id="route_id" route_step_count="route_step_count" topic_name_motion_assignment="topic_name_motion_assignment"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="Process_MoveOrder">
+        <SequenceStar name="Move Order">
+            <Action ID="ExtractMoveOrder" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" name="Extract MoveOrder parameters into Blackboard" order="{current_order}" order_id="{current_order_id}"/>
+            <Fallback name="Try to process move order normally">
+                <Fallback name="Something went wrong and the move order can not be processed normally">
+                    <SequenceStar name="The goal is equal to the order destination">
+                        <Condition ID="AreTopologyEntitiesEqual" first_entity="{current_topology_entity}" second_entity="{move_order_destination}"/>
+                        <Action ID="SetOrderState" input_order_state="ORDER_STATE_MO_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                        <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    </SequenceStar>
+                </Fallback>
+                <SequenceStar name="Process Order">
+                    <Action ID="PlanRoute" agent_id="{agent_id}" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" name="Plan Route using ROS service and extract Route parameters into Blackboard" origin="{current_topology_entity}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route="{route}" route_allocate_step="{route_allocate_step}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" router="/mars/routing/carp_11111111111111111111111111111111" time="{order_time}"/>
+                    <SequenceStar name="Process route">
+                        <Action ID="SetOrderState" input_order_state="ORDER_STATE_MO_MOVE_ORDER_START" order_state="{order_state}"/>
+                        <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                        <Action ID="SetOrderState" input_order_state="ORDER_STATE_MO_MOVE_ORDER_ONGOING" order_state="{order_state}"/>
+                        <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                        <SubTree ID="AllocateStrategy_Entity" agent_id="agent_id" current_topology_entity="current_topology_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" route_allocate_step="route_allocate_step" route_deallocate_step="route_deallocate_step" route_id="route_id" route_step_count="route_step_count" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                        <Action ID="SetOrderState" input_order_state="ORDER_STATE_MO_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                        <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    </SequenceStar>
+                </SequenceStar>
+            </Fallback>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="Process_Order">
+        <SequenceStar name="Take and process order">
+            <Action ID="SetRobotProperties" robot_properties="{robot_properties}" topic_name_robot_properties="{topic_name_robot_properties}"/>
+            <Action ID="SetCurrentTime" name="Start time of the order" time="{order_time}"/>
+            <Fallback name="Switch between order types">
+                <SequenceStar name="Check if the current order is a transport order">
+                    <Condition ID="IsTransportOrder" order="{current_order}"/>
+                    <Action ID="SetOrderType" input_order_type="ORDER_TYPE_TRANSPORT_ORDER" order_type="{order_type}"/>
+                    <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_STARTED" order_status="{order_status}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_ONGOING" order_status="{order_status}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <SubTree ID="Process_TransportOrder" agent_id="agent_id" current_order="current_order" current_order_id="current_order_id" current_topology_entity="current_topology_entity" order_state="order_state" order_status="order_status" order_time="order_time" order_type="order_type" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                </SequenceStar>
+                <SequenceStar name="Check if the current order is a move order">
+                    <Condition ID="IsMoveOrder" order="{current_order}"/>
+                    <Action ID="SetOrderType" input_order_type="ORDER_TYPE_MOVE_ORDER" order_type="{order_type}"/>
+                    <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_STARTED" order_status="{order_status}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_ONGOING" order_status="{order_status}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <SubTree ID="Process_MoveOrder" agent_id="agent_id" current_order="current_order" current_topology_entity="current_topology_entity" order_id="current_order_id" order_state="order_state" order_status="order_status" order_time="order_time" order_type="order_type" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                </SequenceStar>
+            </Fallback>
+            <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_FINISHED" order_status="{order_status}"/>
+            <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+            <SequenceStar name="Reset Order status, since we finished it">
+                <Action ID="SetOrderStatus" input_order_status="ORDER_STATUS_UNKNOWN" order_status="{order_status}"/>
+                <Action ID="SetOrderType" input_order_type="ORDER_TYPE_UNKNOWN" order_type="{order_type}"/>
+                <Action ID="SetOrderState" input_order_state="ORDER_STATE_UNKNOWN" order_state="{order_state}"/>
+                <Action ID="SetId" id="{current_order_id}" name="Set id to an invalid one" uuid_string="INVALID+++++++++++++++++++++++++"/>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="Process_TransportOrder">
+        <SequenceStar name="Process TransportOrder">
+            <Action ID="ExtractTransportOrder" first_step="{first_step}" order="{current_order}" second_step="{second_step}"/>
+            <SequenceStar name="Process both TransportOrderSteps">
+                <SubTree ID="TransportOrderStep_Load" agent_id="agent_id" current_order_id="current_order_id" current_topology_entity="current_topology_entity" order_state="order_state" order_status="order_status" order_time="order_time" order_type="order_type" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" router="/mars/routing/carp_11111111111111111111111111111111" topic_name_motion_assignment="topic_name_motion_assignment" transport_order_step="first_step"/>
+                <SubTree ID="TransportOrderStep_Unload" agent_id="agent_id" current_order_id="current_order_id" current_topology_entity="current_topology_entity" order_state="order_state" order_status="order_status" order_time="order_time" order_type="order_type" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" router="/mars/routing/carp_11111111111111111111111111111111" topic_name_motion_assignment="topic_name_motion_assignment" transport_order_step="second_step"/>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="Process_TransportOrderStep">
+        <SequenceStar name="Setup TransportOrderStep">
+            <Action ID="ExtractTransportOrderStep" move_order="{move_order}" robot_action="{robot_action}" transport_order_step="{transport_order_step}"/>
+            <SequenceStar name="Process TransportOrderStep">
+                <SequenceStar name="MoveOrder">
+                    <Action ID="ExtractMoveOrder" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" order="{move_order}" order_id="{move_order_id}"/>
+                    <Fallback name="Try to process Move Order normally">
+                        <SequenceStar name="Process MoveOrder">
+                            <Action ID="PlanRoute" agent_id="{agent_id}" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" origin="{current_topology_entity}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route="{route}" route_allocate_step="{route_allocate_step}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" router="/mars/routing/carp_11111111111111111111111111111111" time="{order_time}"/>
+                            <SubTree ID="AllocateStrategy_Entity" agent_id="agent_id" current_topology_entity="current_topology_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" route_allocate_step="route_allocate_step" route_deallocate_step="route_deallocate_step" route_id="route_id" route_step_count="route_step_count" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                        </SequenceStar>
+                        <Fallback name="Something went wrong while processing the moveOrder. Try to identify the problem and recover.">
+                            <SequenceStar>
+                                <Condition ID="AreTopologyEntitiesEqual" first_entity="{current_topology_entity}" second_entity="{move_order_destination}"/>
+                            </SequenceStar>
+                            <AlwaysSuccess/>
+                        </Fallback>
+                    </Fallback>
+                </SequenceStar>
+                <SequenceStar name="RobotAction">
+                    <SetBlackboard name="Platzhalter RobotAction" output_key="blubb" value="bla"/>
+                </SequenceStar>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="TransportOrderStep_Load">
+        <SequenceStar name="TransportOrderStep TO">
+            <Action ID="ExtractTransportOrderStep" move_order="{move_order}" robot_action="{robot_action}" transport_order_step="{transport_order_step}"/>
+            <SequenceStar name="Process TransportOrderStep">
+                <SequenceStar name="MoveOrder">
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_MOVE_ORDER_START" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="ExtractMoveOrder" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" order="{move_order}" order_id="{move_order_id}"/>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_MOVE_ORDER_ONGOING" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Fallback name="Try to process Move Order normally">
+                        <Fallback name="Something went wrong while processing the moveOrder. Try to identify the problem and recover.">
+                            <SequenceStar>
+                                <Condition ID="AreTopologyEntitiesEqual" first_entity="{current_topology_entity}" second_entity="{move_order_destination}"/>
+                                <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                                <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                            </SequenceStar>
+                        </Fallback>
+                        <SequenceStar name="Process MoveOrder">
+                            <Action ID="PlanRoute" agent_id="{agent_id}" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" origin="{current_topology_entity}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route="{route}" route_allocate_step="{route_allocate_step}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" router="/mars/routing/carp_11111111111111111111111111111111" time="{order_time}"/>
+                            <SubTree ID="AllocateStrategy_Entity" agent_id="agent_id" current_topology_entity="current_topology_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" route_allocate_step="route_allocate_step" route_deallocate_step="route_deallocate_step" route_id="route_id" route_step_count="route_step_count" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                        </SequenceStar>
+                    </Fallback>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                </SequenceStar>
+                <SequenceStar name="RobotAction">
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_ACTION_START" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_ACTION_ONGOING" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Fallback name="Check actiontype">
+                        <SequenceStar name="Action requires manual trigger">
+                            <Condition ID="IsManualAction" robot_action="{robot_action}"/>
+                            <Action ID="WaitForManualTrigger"/>
+                        </SequenceStar>
+                        <SetBlackboard output_key="123" value="123"/>
+                    </Fallback>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_LOAD_ACTION_FINISHED" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                </SequenceStar>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="TransportOrderStep_Unload">
+        <SequenceStar name="TransportOrderStep TO">
+            <Action ID="ExtractTransportOrderStep" move_order="{move_order}" robot_action="{robot_action}" transport_order_step="{transport_order_step}"/>
+            <SequenceStar name="Process TransportOrderStep">
+                <SequenceStar name="MoveOrder">
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_MOVE_ORDER_START" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="ExtractMoveOrder" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" order="{move_order}" order_id="{move_order_id}"/>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_MOVE_ORDER_ONGOING" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Fallback name="Try to process Move Order normally">
+                        <Fallback name="Something went wrong while processing the moveOrder. Try to identify the problem and recover.">
+                            <SequenceStar>
+                                <Condition ID="AreTopologyEntitiesEqual" first_entity="{current_topology_entity}" second_entity="{move_order_destination}"/>
+                                <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                                <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                            </SequenceStar>
+                        </Fallback>
+                        <SequenceStar name="Process MoveOrder">
+                            <Action ID="PlanRoute" agent_id="{agent_id}" destination="{move_order_destination}" destination_reservation_duration="{move_order_destination_reservation_duration}" origin="{current_topology_entity}" robot_pose="{robot_pose}" robot_properties="{robot_properties}" route="{route}" route_allocate_step="{route_allocate_step}" route_deallocate_step="{route_deallocate_step}" route_id="{route_id}" route_step_count="{route_step_count}" router="/mars/routing/carp_11111111111111111111111111111111" time="{order_time}"/>
+                            <SubTree ID="AllocateStrategy_Entity" agent_id="agent_id" current_topology_entity="current_topology_entity" physical_agent_namespace="physical_agent_namespace" robot_pose="robot_pose" robot_properties="robot_properties" route_allocate_step="route_allocate_step" route_deallocate_step="route_deallocate_step" route_id="route_id" route_step_count="route_step_count" topic_name_motion_assignment="topic_name_motion_assignment"/>
+                        </SequenceStar>
+                    </Fallback>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_MOVE_ORDER_FINISHED" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                </SequenceStar>
+                <SequenceStar name="RobotAction">
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_ACTION_START" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_ACTION_ONGOING" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                    <Fallback name="check actiontype">
+                        <SequenceStar name="manual action">
+                            <Condition ID="IsManualAction" robot_action="{robot_action}"/>
+                            <Action ID="WaitForManualTrigger"/>
+                        </SequenceStar>
+                        <SetBlackboard name="Placeholder for other types" output_key="123" value="123"/>
+                    </Fallback>
+                    <Action ID="SetOrderState" input_order_state="ORDER_STATE_TO_UNLOAD_ACTION_FINISHED" order_state="{order_state}"/>
+                    <Action ID="PublishOrderStatus" order_id="{current_order_id}" order_state="{order_state}" order_status="{order_status}" order_type="{order_type}"/>
+                </SequenceStar>
+            </SequenceStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AllocateEntity">
+            <input_port name="agent_id"/>
+            <input_port name="allocation_count"/>
+            <output_port name="allocation_done"/>
+            <input_port name="allocation_limit"/>
+            <output_port name="num_new_allocated"/>
+            <input_port name="robot_properties"/>
+            <input_port name="route_allocate_step"/>
+            <input_port name="route_id"/>
+        </Action>
+        <SubTree ID="AllocateStrategy_Entity">
+            <input_port name="agent_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="route_allocate_step"/>
+            <input_port name="route_deallocate_step"/>
+            <input_port name="route_id"/>
+            <input_port name="route_step_count"/>
+            <input_port name="topic_name_motion_assignment"/>
+        </SubTree>
+        <Condition ID="AreIdsEqual">
+            <input_port name="first_id"/>
+            <input_port name="second_id"/>
+        </Condition>
+        <Condition ID="AreTopologyEntitiesEqual">
+            <input_port name="first_entity"/>
+            <input_port name="second_entity"/>
+        </Condition>
+        <Action ID="DeallocateEntity">
+            <input_port name="agent_id"/>
+            <input_port name="allocation_count"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="route_deallocate_step"/>
+            <input_port name="route_id"/>
+        </Action>
+        <Action ID="DeallocateRoute">
+            <input_port name="current_step_index"/>
+            <input_port name="steps"/>
+        </Action>
+        <Action ID="DisplayError">
+            <input_port name="message"/>
+        </Action>
+        <Action ID="ExtractMoveOrder">
+            <output_port name="destination"/>
+            <output_port name="destination_reservation_duration"/>
+            <input_port name="order"/>
+            <output_port name="order_id"/>
+        </Action>
+        <Action ID="ExtractTransportOrder">
+            <output_port name="first_step"/>
+            <input_port name="order"/>
+            <output_port name="second_step"/>
+        </Action>
+        <Action ID="ExtractTransportOrderStep">
+            <output_port name="move_order"/>
+            <output_port name="robot_action"/>
+            <input_port name="transport_order_step"/>
+        </Action>
+        <Action ID="ImportROSParameter">
+            <output_port name="output_key"/>
+            <input_port name="parameter"/>
+        </Action>
+        <SubTree ID="InitializeLogicalAgent">
+            <output_port name="agent_id"/>
+            <output_port name="current_topology_entity"/>
+            <output_port name="logical_agent_namespace"/>
+            <output_port name="new_order_flag"/>
+            <output_port name="order_state"/>
+            <output_port name="order_type"/>
+            <output_port name="parking_allowed"/>
+            <output_port name="parking_flag"/>
+            <output_port name="parking_spot_entity"/>
+            <output_port name="physical_agent_namespace"/>
+            <output_port name="service_name_add_move_order"/>
+            <output_port name="service_name_add_transport_order"/>
+            <output_port name="topic_name_action_assignment"/>
+            <output_port name="topic_name_assignment_status"/>
+            <output_port name="topic_name_current_motion"/>
+            <output_port name="topic_name_motion_assignment"/>
+            <output_port name="topic_name_robot_properties"/>
+        </SubTree>
+        <Condition ID="IsManualAction">
+            <input_port name="robot_action"/>
+        </Condition>
+        <Condition ID="IsMoveOrder">
+            <input_port name="order"/>
+        </Condition>
+        <Condition ID="IsTransportOrder">
+            <input_port name="order"/>
+        </Condition>
+        <Condition ID="IsTrue">
+            <input_port name="input"/>
+        </Condition>
+        <SubTree ID="MoveOrder">
+            <input_port name="agent_id"/>
+            <output_port name="current_topology_entity"/>
+            <input_port name="order_id"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="route_allocate_step"/>
+            <input_port name="route_deallocate_step"/>
+            <input_port name="route_id"/>
+            <input_port name="route_step_count"/>
+            <input_port name="topic_name_motion_assignment"/>
+        </SubTree>
+        <SubTree ID="Parking">
+            <input_port name="agent_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="parking_spot"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="topic_name_motion_assignment"/>
+            <input_port name="topic_name_robot_properties"/>
+        </SubTree>
+        <Action ID="PerformRobotAction">
+            <input_port name="action"/>
+        </Action>
+        <Action ID="PlanRoute">
+            <input_port name="agent_id"/>
+            <input_port name="destination"/>
+            <input_port name="destination_reservation_duration"/>
+            <input_port name="origin"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <output_port name="route"/>
+            <output_port name="route_allocate_step"/>
+            <output_port name="route_deallocate_step"/>
+            <output_port name="route_id"/>
+            <output_port name="route_step_count"/>
+            <input_port name="router"/>
+            <input_port name="time"/>
+        </Action>
+        <SubTree ID="Process_MoveOrder">
+            <input_port name="agent_id"/>
+            <input_port name="current_order"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_id"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_time"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="topic_name_motion_assignment"/>
+        </SubTree>
+        <SubTree ID="Process_Order">
+            <input_port name="agent_id"/>
+            <input_port name="current_order"/>
+            <input_port name="current_order_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_twist"/>
+            <input_port name="service_name_add_move_order"/>
+            <input_port name="service_name_add_transport_order"/>
+            <input_port name="topic_name_action_assignment"/>
+            <input_port name="topic_name_assignment_status"/>
+            <input_port name="topic_name_current_motion"/>
+            <input_port name="topic_name_motion_assignment"/>
+            <input_port name="topic_name_robot_properties"/>
+        </SubTree>
+        <SubTree ID="Process_TransportOrder">
+            <input_port name="agent_id"/>
+            <input_port name="current_order"/>
+            <input_port name="current_order_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_time"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="topic_name_motion_assignment"/>
+        </SubTree>
+        <SubTree ID="Process_TransportOrderStep">
+            <input_port name="agent_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_time"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="router"/>
+            <input_port name="topic_name_motion_assignment"/>
+            <input_port name="transport_order_step"/>
+        </SubTree>
+        <Action ID="PublishMotionAssignmentsToTarget">
+            <input_port name="motion_assignment_index"/>
+            <input_port name="num_new_allocated"/>
+            <input_port name="route_allocate_step"/>
+            <input_port name="route_id"/>
+            <input_port name="route_step_count"/>
+            <input_port name="topic_name_motion_assignment"/>
+        </Action>
+        <Action ID="PublishOrderStatus">
+            <input_port name="order_id"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_type"/>
+        </Action>
+        <Action ID="PublishTargetMotionAssignment">
+            <input_port name="step_index"/>
+            <input_port name="steps"/>
+        </Action>
+        <Decorator ID="RepeatOncePerTick"/>
+        <Decorator ID="RepeatUntilDone">
+            <input_port name="done_status"/>
+        </Decorator>
+        <Decorator ID="RepeatUntilSuccessful"/>
+        <Action ID="SetCurrentMotion">
+            <output_port name="pose"/>
+            <input_port name="topic_name_motion"/>
+            <output_port name="twist"/>
+        </Action>
+        <Action ID="SetCurrentOrder">
+            <output_port name="new_order_flag"/>
+            <output_port name="order"/>
+            <output_port name="order_id"/>
+            <input_port name="service_name_add_move_order"/>
+            <input_port name="service_name_add_transport_order"/>
+        </Action>
+        <Action ID="SetCurrentTime">
+            <output_port name="time"/>
+        </Action>
+        <Action ID="SetDuration">
+            <input_port name="duration"/>
+            <output_port name="reservation_duration"/>
+        </Action>
+        <Action ID="SetId">
+            <output_port name="id"/>
+            <input_port name="uuid_string"/>
+        </Action>
+        <Action ID="SetOrderState">
+            <input_port name="input_order_state"/>
+            <output_port name="order_state"/>
+        </Action>
+        <Action ID="SetOrderStatus">
+            <input_port name="input_order_status"/>
+            <output_port name="order_status"/>
+        </Action>
+        <Action ID="SetOrderType">
+            <input_port name="input_order_type"/>
+            <output_port name="order_type"/>
+        </Action>
+        <Action ID="SetRobotProperties">
+            <output_port name="robot_properties"/>
+            <input_port name="topic_name_robot_properties"/>
+        </Action>
+        <Action ID="SetTopologyEntity">
+            <output_port name="entity"/>
+            <input_port name="entity_id"/>
+            <input_port name="entity_type"/>
+        </Action>
+        <Action ID="StringToBool">
+            <input_port name="input"/>
+            <output_port name="output"/>
+        </Action>
+        <SubTree ID="TransportOrderStep_Load">
+            <input_port name="agent_id"/>
+            <input_port name="current_order_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_time"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="router"/>
+            <input_port name="topic_name_motion_assignment"/>
+            <input_port name="transport_order_step"/>
+        </SubTree>
+        <SubTree ID="TransportOrderStep_Unload">
+            <input_port name="agent_id"/>
+            <input_port name="current_order_id"/>
+            <input_port name="current_topology_entity"/>
+            <input_port name="order_state"/>
+            <input_port name="order_status"/>
+            <input_port name="order_time"/>
+            <input_port name="order_type"/>
+            <input_port name="physical_agent_namespace"/>
+            <input_port name="robot_pose"/>
+            <input_port name="robot_properties"/>
+            <input_port name="router"/>
+            <input_port name="topic_name_motion_assignment"/>
+            <input_port name="transport_order_step"/>
+        </SubTree>
+        <Action ID="WaitForManualTrigger"/>
+        <Action ID="WaitForNSeconds">
+            <input_port name="wait_duration"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+

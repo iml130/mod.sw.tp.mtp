@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_routing_base</name>
+  <version>0.0.0</version>
+  <description>The mars_routing_base package</description>
+
+  <maintainer email="marc.hantzsch@iml.fraunhofer.de">Marc Hantzsch</maintainer>
+
+  <license>TODO</license>
+
+  <author email="marc.hantzsch@iml.fraunhofer.de">Marc Hantzsch</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>pluginlib</depend>
+  <depend>roscpp</depend>
+  <depend>mars_routing_common</depend>
+  <depend>mars_routing_core</depend>
+  <depend>mars_common</depend>
+  <depend>mars_routing_srvs</depend>
+  <depend>mars_topology_msgs</depend>
+  <depend>mars_common_msgs</depend>
+  <depend>mars_routing_plugin_carp</depend>
+  
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>mars_routing_core</test_depend>
+  <test_depend>mars_topology_edge</test_depend>
+  <test_depend>mars_topology_vertex</test_depend>
+</package>

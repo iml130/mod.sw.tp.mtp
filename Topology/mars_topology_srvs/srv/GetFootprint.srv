@@ -1,0 +1,4 @@
+mars_common_msgs/Id entity_id
+---
+# footprint of a graph entity (topology vertex or edge)
+geometry_msgs/PolygonStamped footprint

@@ -1,0 +1,93 @@
+<launch>
+  <!-- Log level of the node. Possible log levels are: debug, info, warn, error, fatal-->
+  <arg name="log_level" default="info" />
+
+  <!-- building namespace for mars topology nodes: -->
+  <!-- structure of the namespace: global_prefix + sub_prefix + node_id = ns -->
+  <!-- Note: the node_id is automatically added to the namespace -->
+  <!-- Every prefix must be followed by  '::'   e.g. prefix:: -->
+  <!-- Global prefix of a node -->
+  <!-- <arg name="ns_prefix_global" default="mars/topology" /> -->
+  <arg name="ns_prefix_global" default="topology" />
+
+  <!-- Sub prefix of a node -->
+  <arg name="ns_sub_prefix_vertex" default="" />
+  <arg name="ns_sub_prefix_edge" default="" />
+  <arg name="ns_sub_prefix_container" default="" />
+
+  <!-- Config for the topology file type. Supported file types are: opentcs and opil_sp -->
+  <arg name="topo_file_type" default="unsupported" />
+
+  <!-- Topic name of the topic to be subscribed (specific param(s) for opil_sp) -->
+  <arg name="topo_topic_name" default="/map/graph" />
+
+  <!-- Path to the topology file which will be parsed and the topology will be created (specific param(s) for opentcs)-->
+  <arg name="topo_file_path" default="" />
+
+  <!-- Output type: either screen or log -->
+  <arg name="output_type" default="screen"/>
+
+  <!-- Sets the mode how the topology is started: agent or container -->
+  <!-- Agent: Each topology entity is represented by an individual agent -->
+  <!-- Container: An amount of topology agent is stored / combined inside a container -->
+  <arg name="topology_launch_mode" default="container"/>
+
+  <!-- ################################    Launch settings   ################################ -->
+
+  <!-- ################################ MARS generic settings ################################ -->
+  <arg name="mars_entity_maximum_linear_velocity" default="2.0" />
+  <arg name="mars_entity_maximum_angular_velocity" default="1.0" />
+  <arg name="mars_entity_maximum_linear_acceleration" default="1.0" />
+  <arg name="mars_entity_maximum_angular_acceleration" default="0.5" />
+
+  <!-- ################################ MARS vertex settings ################################ -->
+  <arg name="mars_container_node_pkg" default="mars_topology_container" />
+  <arg name="mars_container_node_type" default="mars_topology_container" />
+  <arg name="mars_container_node_ns_prefix" default="$(arg ns_prefix_global)$(arg ns_sub_prefix_container)" />  
+
+  <!-- ################################ MARS vertex settings ################################ -->
+  <arg name="mars_vertex_node_pkg" default="mars_topology_vertex" />
+  <arg name="mars_vertex_node_type" default="mars_topology_vertex" />
+  <arg name="mars_vertex_node_ns_prefix" default="$(arg ns_prefix_global)$(arg ns_sub_prefix_vertex)" />
+  <!-- Footprint bb type (Only for OpenTCS and GraphML) -->
+  <!-- Types can be: 1) circle = 1 or square = 2 -->
+  <arg name="mars_vertex_footprint_bb_type" default="1"/>
+  <!-- Radius in meter -->
+  <arg name="mars_vertex_footprint_radius" default="0.5" />
+  <!-- Resolution in number of points (Only used for OpenTCS topology) -->
+  <arg name="mars_vertex_footprint_resolution" default="20" />
+
+  <!-- ################################# MARS edge settings ################################# -->
+  <arg name="mars_edge_node_pkg" default="mars_topology_edge" />
+  <arg name="mars_edge_node_type" default="mars_topology_edge" />
+  <arg name="mars_edge_node_ns_prefix" default="$(arg ns_prefix_global)$(arg ns_sub_prefix_edge)" />
+
+
+  <!-- ################################# Launching ros node ################################# -->
+  <node name="mars_topology_launcher" pkg="mars_topology_launcher" type="MARSTopologyLauncher.py" output="$(arg output_type)">
+    <param name="log_level" value="$(arg log_level)" />
+    <param name="topo_file_path" value="$(arg topo_file_path)" />
+    <param name="topo_file_type" value="$(arg topo_file_type)" />
+    <param name="topo_topic_name" value="$(arg topo_topic_name)" />
+    <param name="topology_launch_mode" value="$(arg topology_launch_mode)" />
+    <!-- MARS container settings -->
+    <param name="mars_container_node_pkg" value="$(arg mars_container_node_pkg)" />
+    <param name="mars_container_node_type" value="$(arg mars_container_node_type)" />
+    <param name="mars_container_node_ns_prefix" value="$(arg mars_container_node_ns_prefix)" />
+    <!-- MARS vertex settings -->
+    <param name="mars_vertex_node_pkg" value="$(arg mars_vertex_node_pkg)" />
+    <param name="mars_vertex_node_type" value="$(arg mars_vertex_node_type)" />
+    <param name="mars_vertex_node_ns_prefix" value="$(arg mars_vertex_node_ns_prefix)" />
+    <param name="mars_vertex_footprint_radius" value="$(arg mars_vertex_footprint_radius)" />
+    <param name="mars_vertex_footprint_resolution" value= "$(arg mars_vertex_footprint_resolution)" />
+    <param name="mars_vertex_footprint_bb_type" value= "$(arg mars_vertex_footprint_bb_type)" />
+    <param name="mars_entity_maximum_linear_velocity" value="$(arg mars_entity_maximum_linear_velocity)" />
+    <param name="mars_entity_maximum_angular_velocity" value="$(arg mars_entity_maximum_angular_velocity)" />
+    <param name="mars_entity_maximum_linear_acceleration" value="$(arg mars_entity_maximum_linear_acceleration)" />
+    <param name="mars_entity_maximum_angular_acceleration" value="$(arg mars_entity_maximum_angular_acceleration)" />
+    <!-- MARS edge settings -->
+    <param name="mars_edge_node_pkg" value="$(arg mars_edge_node_pkg)" />
+    <param name="mars_edge_node_type" value="$(arg mars_edge_node_pkg)" />
+    <param name="mars_edge_node_ns_prefix" value="$(arg mars_edge_node_ns_prefix)" />
+  </node>
+</launch>

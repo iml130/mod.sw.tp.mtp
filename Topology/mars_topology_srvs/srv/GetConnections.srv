@@ -1,0 +1,4 @@
+mars_common_msgs/Id entity_id
+---
+mars_topology_msgs/Connection[] connections
+mars_topology_msgs/Connection[] container_connections

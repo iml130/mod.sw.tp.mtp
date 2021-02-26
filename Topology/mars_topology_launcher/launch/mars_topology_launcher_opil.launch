@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+
+<launch>
+  <!-- building namespace for mars topology nodes: -->
+  <!-- structure of the namespace: global_prefix + sub_prefix + node_id = ns -->
+  <!-- Note: the node_id is automatically added to the namespace -->
+  <!-- Every prefix must be followed by  '::'   e.g. prefix:: -->
+  <!-- Global prefix of a node -->
+  <!-- <arg name="ns_prefix_global" default="mars/topology" /> -->
+  <arg name="ns_prefix_global" default="topology" />
+
+  <!-- Sub prefix of a node -->
+  <arg name="ns_sub_prefix_vertex" default="" />
+  <arg name="ns_sub_prefix_edge" default="" />
+
+  <!-- Config for the topology file type -->
+  <!-- Supported file types are: opentcs and opil_sp-->
+  <!-- <arg name="topo_file_type" default="opentcs"/> -->
+  <arg name="topo_file_type" default="opil_sp"/>
+
+  <node name="mars_topology_launcher" pkg="mars_topology_launcher" 
+    type="MARSTopologyLauncher.py" output="screen">
+    <!-- Log level of the node. Possible log levels are: 
+    debug, info, warn, error, fatal-->
+    <param name="log_level" value="debug" />
+    <!-- Path to the topology file which will be parsed and the 
+    topology will be created -->
+    <!-- <param name="topo_file_path" value="$(find mars_topology_launcher)/data/easy_topo.xml" /> -->
+    <!-- <param name="topo_file_path" value="$(find mars_topology_launcher)/data/smartFaceTopo.xml" /> -->
+    <!-- <param name="topo_file_path" value="$(find mars_topology_launcher)/data/zft_halle.xml" /> -->
++    <!-- Info about the file type which should be parsed.
+    Supported file types are: opentcs and opil_sp -->
+    <param name="topo_file_type" value="opil_sp" />
+
+    <!-- topo_file_type specific param(s) for opil_sp -->
+    <!-- Topic name of the topic to be subscribed -->
+    <param name="topo_topic_name" value="/map/graph" />
+
+    <!-- MARS vertex settings -->
+    <param name="mars_vertex_node_pkg" value="mars_topology_vertex" />
+    <param name="mars_vertex_node_type" value="mars_topology_vertex" />
+    <param name="mars_vertex_node_ns_prefix" value="$(arg ns_prefix_global)$(arg ns_sub_prefix_vertex)" />
+    <!-- Radius in meter -->
+    <param name="mars_vertex_footprint_radius" value="0.5" />
+    <!-- Resolution in number of points (Only used for OpenTCS topology) -->
+    <param name="mars_vertex_footprint_resolution" value= "20" />
+
+    <!-- MARS edge settings -->
+    <param name="mars_edge_node_pkg" value="mars_topology_edge" />
+    <param name="mars_edge_node_type" value="mars_topology_edge" />
+    <param name="mars_edge_node_ns_prefix" value="$(arg ns_prefix_global)$(arg ns_sub_prefix_edge)" />
+  </node>
+</launch>

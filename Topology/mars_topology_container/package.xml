@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_topology_container</name>
+  <version>0.0.0</version>
+  <description>The mars_topology_container package</description>
+
+  <maintainer email="christian.blesing@iml.fraunhofer.de">blesing</maintainer>
+
+  <license>TODO</license>
+
+  <author email="christian.blesing@iml.fraunhofer.de">blesing</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>mars_common</depend>
+  <depend>actionlib</depend>
+  <depend>mars_topology_msgs</depend>
+  <depend>mars_topology_srvs</depend>
+  <depend>mars_topology_actions</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>mars_topology_edge</depend>
+  <depend>mars_topology_vertex</depend>
+
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+
+</package>

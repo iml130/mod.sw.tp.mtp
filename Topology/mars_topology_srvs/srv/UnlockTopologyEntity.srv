@@ -1,0 +1,8 @@
+# Id of the lock.
+mars_common_msgs/Id lock_id
+# optional reason (for logging)
+string reason
+mars_common_msgs/Id entity_id
+---
+# True if now error occours
+mars_common_msgs/Result result

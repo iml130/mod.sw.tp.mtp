@@ -1,0 +1,5 @@
+# The current move to set
+mars_agent_logical_msgs/SetMode mode
+---
+# Returns true if no error occurs
+mars_common_msgs/Result result

@@ -1,0 +1,10 @@
+# Skipped for OPIL v2
+# Capabilities capabilities
+
+mars_agent_logical_msgs/TransportOrder transport_order
+---
+duration travel_time
+duration dest_process_time
+time earliest_start_time
+uint8 order_predecessors
+float32 distance_to_dest

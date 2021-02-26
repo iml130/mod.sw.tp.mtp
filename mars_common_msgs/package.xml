@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_common_msgs</name>
+  <version>0.0.0</version>
+  <description>The mars_common_msgs stores the needed msg files which are needed by
+    the mars project.</description>
+
+    <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+
+  <license>TODO</license>
+
+  <author email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+
+  <depend>std_msgs</depend>
+</package>

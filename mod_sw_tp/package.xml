@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mod_sw_tp</name>
+  <version>0.0.0</version>
+  <description>The mod_sw_tp package</description>
+  <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

@@ -1,0 +1,4 @@
+mars_common_msgs/Id entity_id
+---
+# Coordinate of the vertex (topology point)
+geometry_msgs/PointStamped point

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_yellow_pages</name>
+  <version>0.0.0</version>
+  <description>The mars_yellow_pages package</description>
+
+  <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+  <author email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <exec_depend>roscpp</exec_depend>
+
+  <depend>mars_common</depend>
+  <depend>mars_topology_msgs</depend>
+  <depend>mars_topology_srvs</depend>
+
+  <export>
+
+  </export>
+</package>

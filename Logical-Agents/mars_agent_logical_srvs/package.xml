@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_agent_logical_srvs</name>
+  <version>0.0.0</version>
+  <description>The mars_agent_logical_srvs package</description>
+
+  <maintainer email="christian.blesing@iml.fraunhofer.de">Christian Blesing</maintainer>
+
+  <license>TODO</license>
+
+  <author email="christian.blesing@iml.fraunhofer.de">Christian Blesing</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+
+  <depend>std_msgs</depend>
+  <depend>mars_common_msgs</depend>
+  <depend>mars_agent_logical_msgs</depend>
+  <depend>mars_topology_msgs</depend>
+
+</package>

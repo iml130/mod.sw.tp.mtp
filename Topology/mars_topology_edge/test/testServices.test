@@ -1,0 +1,155 @@
+<launch>
+
+<node name="edge_00000000000000000000000000000003" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="00000000-0000-0000-0000-000000000003" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+
+    <!-- Edge specific params -->
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="length" value="5.0" />
+    <param name="direction" value="2" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+  </node>
+
+<node name="edge_00000000000000000000000000000004" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="00000000-0000-0000-0000-000000000004" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+
+    <!-- Edge specific params -->
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="length" value="5.0" />
+    <param name="direction" value="0" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+  </node>
+
+<node name="edge_00000000000000000000000000000005" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="00000000-0000-0000-0000-000000000005" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+
+    <!-- Edge specific params -->
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="length" value="5.0" />
+    <param name="direction" value="2" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+  </node>
+
+<node name="edge_00000000000000000000000000000006" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="00000000-0000-0000-0000-000000000006" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+
+    <!-- Edge specific params -->
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="length" value="5.0" />
+    <param name="direction" value="2" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+  </node>
+
+
+<node name="edge_00000000000000000000000000000007" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="00000000-0000-0000-0000-000000000007" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+
+    <!-- Edge specific params -->
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="length" value="5.0" />
+    <param name="direction" value="2" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+  </node>
+
+<test test-name="mars_topology_edge_edge_service_test_test" pkg="mars_topology_edge" type="mars_topology_edge-edge-service-test" time-limit="1000.0"/>
+</launch>

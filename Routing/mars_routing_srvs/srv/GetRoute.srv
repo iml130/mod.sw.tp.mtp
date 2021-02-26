@@ -1,0 +1,23 @@
+# Possible route request types:
+uint8 GET_TEST_ROUTE=0
+uint8 GET_ROUTE=1
+
+# For requesting a route, see possibilities above
+uint8 route_request_type
+# Point of time at which the vehicle could start following the route
+std_msgs/Time start_time
+# Start topology entity of the route. In general, this is the topology entity the agent is currently on.
+mars_topology_msgs/TopologyEntity origin
+# Destination entity for the task
+mars_topology_msgs/TopologyEntity destination
+# Destination reservation duration
+duration destination_reservation_duration 
+# Properties of the robot for restrictive routing
+mars_agent_physical_robot_msgs/RobotAgentProperties robot_agent_properties
+# Orientation of the robot at the origin vertex
+float32 robot_agent_orientation
+---
+mars_common_msgs/Result result
+mars_common_msgs/Id path_id
+mars_routing_msgs/Step[] route
+uint32 visualization_id

@@ -1,0 +1,37 @@
+<launch>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 1 world map" />
+  <!-- ****** Yellow Pages ***** -->
+  <include file="$(find mars_yellow_pages)/launch/mars_yellow_pages.launch" />
+
+  <!--  ****** Topology *****  -->
+  <include file="$(find mars_topology_launcher)/launch/mars_topology_launcher_generic.launch">
+    <arg name="log_level" value="info" />
+    <arg name="topo_file_type" value="opil_sp" />
+    <arg name="mars_vertex_footprint_radius" value="1.15" />
+    <arg name="topology_launch_mode" default="container"/>
+  </include>
+
+  <!-- ****** Router ***** -->
+  <include file="$(find mars_routing_base)/launch/mars_routing_base.launch" />
+
+  <!-- ****** Logical Agent (robot_0) ***** -->
+  <include file="$(find mars_agent_logical_agv)/launch/mars_agent_logical_agv.launch">
+    <arg name="robot_name" value="robot_opil_v2" />
+    <arg name="physical_agent_id" value="00000000-0000-0000-0000-000000000001" />
+    <arg name="physical_agent_description" value="robot_0" />
+    <arg name="current_topology_entity_id" value="e53201ce-c3e3-53ed-b3df-daf27fcbb8e9" />
+    <arg name="parking_allowed" default="true" />
+    <arg name="parking_spot_entity_id" default="e53201ce-c3e3-53ed-b3df-daf27fcbb8e9" />
+    <!-- p0 -->
+    <!-- ZFT hall rb1 setup -->
+    <arg name="node_name" value="ran_00000000000000000000000000000001" />
+    <arg name="physical_robot_namespace" value=""/>
+  </include>
+
+  <!-- ****** Firos ***** -->
+  <!-- <node name="firos" pkg="firos" type="core.py"/> -->
+
+  <node type="rviz" name="rviz_tp" pkg="rviz" args="-d $(find mod_sw_tp)/rviz/config.rviz" />
+
+</launch>

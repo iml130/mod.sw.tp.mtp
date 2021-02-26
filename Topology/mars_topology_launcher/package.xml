@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_topology_launcher</name>
+  <version>0.0.0</version>
+  <description>The mars_topology_launcher package</description>
+
+  <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+
+  <license>TODO</license>
+
+  <author email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>mars_topology_srvs</depend>
+  <depend>mars_common</depend>
+
+</package>

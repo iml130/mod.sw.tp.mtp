@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="mars_yellow_pages" pkg="mars_yellow_pages" type="mars_yellow_pages" output="screen">
+
+    <!-- Node settings -->
+    <!-- log level can be 'debug', 'info', 'warn', 'error' or 'fatal' -->
+    <param name="log_level" value="debug" />
+  </node>
+</launch>

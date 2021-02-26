@@ -1,0 +1,149 @@
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Repeat name="Indefinite Queue Processing" num_cycles="-1">
+            <SequenceStar name="Take and process order">
+                <Action ID="GetNextOrder" name="Convert first order in queue into Blackboard" order="{current_order}"/>
+                <Action ID="GetCurrentTime" time="{current_time}" name="Start time of the order"/>
+                <Fallback name="Switch between order types">
+                    <SequenceStar name="Move Order">
+                        <Condition ID="IsMoveOrder" name="Is current order a Move Order? (optional)" order="{current_order}"/>
+                        <Action ID="ExtractMoveOrder" destination="{move_order_destination}" origin="{move_order_origin}" name="Extract MoveOrder parameters into Blackboard" destination_reservation_duration="{move_order_destination_reservation_duration}" order="{current_order}"/>
+                        <Action step_count="{route_step_count}" travel_duration="{route_travel_duration}" ID="PlanRoute" travel_distance="{route_travel_distance}" destination="{move_order_destination}" start_time="{current_time}" origin="{move_order_origin}" name="Plan Route using ROS service and extract Route parameters into Blackboard" destination_reservation_duration="{move_order_destination_reservation_duration}" steps="{route_steps}"/>
+                        <SubTree ID="MoveOrder" route_steps="{route_steps}" allocation_limit="3" route_step_count="{route_step_count}"/>
+                    </SequenceStar>
+                    <SequenceStar name="Transport Order">
+                        <Condition ID="IsTransportOrder" name="Is current order a Transport Order? (optional)" order="{current_order}"/>
+                        <Action robot_action_1="" robot_action_2="" ID="ExtractTransportOrder" move_order_2_destination_reservation_duration="" move_order_1_destination="" move_order_2_destination="" name="Extract TransportOrder parameters into Blackboard" move_order_1_destination_reservation_duration="" move_order_1_origin="" move_order_2_origin="" order="{current_order}"/>
+                        <Action step_count="{route_1_step_count}" travel_duration="{route_1_travel_duration}" ID="PlanRoute" travel_distance="{route_1_travel_distance}" destination="{move_order_1_destination}" start_time="{current_time}" origin="{move_order_1_origin}" name="Plan Route to origin using ROS service and extract Route parameters into Blackboard" destination_reservation_duration="{move_order_1_destination_reservation_duration}" steps="{route_1_steps}"/>
+                        <Action ID="CalculateSum" right="{route_1_travel_duration}" left="{current_time}" name="Calculate start time for Route to destination" sum="{route_2_start_time}"/>
+                        <Action step_count="{route_2_step_count}" travel_duration="{route_2_travel_duration}" ID="PlanRoute" travel_distance="{route_2_travel_distance}" destination="{move_order_2_destination}" start_time="{route_2_start_time}" origin="{move_order_2_origin}" name="Plan Route to destination using ROS service and extract Route parameters into Blackboard" destination_reservation_duration="{move_order_2_destination_reservation_duration}" steps="{route_2_steps}"/>
+                        <SubTree ID="MoveOrder" route_steps="{route_1_steps}" allocation_limit="3" route_step_count="{route_1_step_count}"/>
+                        <Action ID="PerformRobotAction" name="Action at origin" action="{robot_action_1}"/>
+                        <SubTree ID="MoveOrder" route_steps="{route_2_steps}" allocation_limit="3" route_step_count="{route_2_step_count}"/>
+                        <Action ID="PerformRobotAction" name="Action at destination" action="{robot_action_2}"/>
+                    </SequenceStar>
+                    <Action ID="DisplayError" message="Order type has not been recognized and cannot be processed! Skipping..." name="Unknown Order type"/>
+                </Fallback>
+            </SequenceStar>
+        </Repeat>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="MoveOrder">
+        <SequenceStar name="Preallocate path">
+            <SetBlackboard output_key="current_step_index" name="Initialize steps" value="0"/>
+            <SetBlackboard output_key="allocation_count" name="Initialize number of allocations" value="0"/>
+            <SetBlackboard output_key="deallocation_count" value="0"/>
+            <Fallback>
+                <Parallel threshold="2">
+                    <Repeat name="Allocate" num_cycles="${route_step_count}">
+                        <SequenceStar name="Allocation of topology nodes">
+                            <Action step_index="{current_step_index}" ID="AllocateTarget" allocation_limit="{allocation_limit}" name="Allocating next target, if limit not reached" allocation_count="{allocation_count}"/>
+                            <Action step_index="{current_step_index}" ID="PublishIntersectionMotionAssignment" steps="{route_steps}"/>
+                            <Action step_index="{current_step_index}" ID="PublishTargetMotionAssignment" steps="{route_steps}"/>
+                            <Action ID="Increment" name="Increment allocation count" parameter="{allocation_count}"/>
+                            <Action ID="Increment" name="Increment current step index" parameter="{current_step_index}"/>
+                        </SequenceStar>
+                    </Repeat>
+                    <Repeat name="Deallocate" num_cycles="{route_step_count}">
+                        <SequenceStar name="Deallocation of topology nodes">
+                            <Action step_index="{deallocation_count}" ID="DeallocateTarget" current_step_index="{current_step_index}" deallocation_count="{deallocation_count}" name="Try deallocating target, requires ROS Subscriber to AssignmentStatus" allocation_count="{allocation_count}"/>
+                            <Action ID="Increment" name="Increment deallocation count" parameter="{deallocation_count}"/>
+                            <Action ID="Decrement" name="Decrement allocation count" parameter="{allocation_count}"/>
+                        </SequenceStar>
+                    </Repeat>
+                </Parallel>
+                <Action ID="DeallocateRoute" current_step_index="{current_step_index}" steps="{route_steps}"/>
+            </Fallback>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AllocateTarget">
+            <input_port name="allocation_count"/>
+            <input_port name="allocation_limit"/>
+            <input_port name="step_index"/>
+        </Action>
+        <Action ID="CalculateSum">
+            <input_port name="left"/>
+            <input_port name="right"/>
+            <output_port name="sum"/>
+        </Action>
+        <Action ID="DeallocateRoute">
+            <input_port name="current_step_index"/>
+            <input_port name="steps"/>
+        </Action>
+        <Action ID="DeallocateTarget">
+            <input_port name="allocation_count"/>
+            <input_port name="current_step_index"/>
+            <input_port name="deallocation_count"/>
+            <input_port name="step_index"/>
+        </Action>
+        <Action ID="Decrement">
+            <input_port name="parameter"/>
+        </Action>
+        <Action ID="DisplayError">
+            <input_port name="message"/>
+        </Action>
+        <Action ID="ExtractMoveOrder">
+            <output_port name="destination"/>
+            <output_port name="destination_reservation_duration"/>
+            <input_port name="order"/>
+            <output_port name="origin"/>
+        </Action>
+        <Action ID="ExtractTransportOrder">
+            <output_port name="move_order_1_destination"/>
+            <output_port name="move_order_1_destination_reservation_duration"/>
+            <output_port name="move_order_1_origin"/>
+            <output_port name="move_order_2_destination"/>
+            <output_port name="move_order_2_destination_reservation_duration"/>
+            <output_port name="move_order_2_origin"/>
+            <input_port name="order"/>
+            <output_port name="robot_action_1"/>
+            <output_port name="robot_action_2"/>
+        </Action>
+        <Action ID="GetCurrentTime">
+            <output_port name="time"/>
+        </Action>
+        <Action ID="GetNextOrder">
+            <output_port name="order"/>
+        </Action>
+        <Action ID="Increment">
+            <input_port name="parameter"/>
+        </Action>
+        <Condition ID="IsMoveOrder">
+            <input_port name="order"/>
+        </Condition>
+        <Condition ID="IsTransportOrder">
+            <input_port name="order"/>
+        </Condition>
+        <SubTree ID="MoveOrder">
+            <input_port name="allocation_limit"/>
+            <input_port name="route_step_count"/>
+            <input_port name="route_steps"/>
+        </SubTree>
+        <Action ID="PerformRobotAction">
+            <input_port name="action"/>
+        </Action>
+        <Action ID="PlanRoute">
+            <input_port name="destination"/>
+            <input_port name="destination_reservation_duration"/>
+            <input_port name="origin"/>
+            <input_port name="start_time"/>
+            <output_port name="step_count"/>
+            <output_port name="steps"/>
+            <output_port name="travel_distance"/>
+            <output_port name="travel_duration"/>
+        </Action>
+        <Action ID="PublishIntersectionMotionAssignment">
+            <input_port name="step_index"/>
+            <input_port name="steps"/>
+        </Action>
+        <Action ID="PublishTargetMotionAssignment">
+            <input_port name="step_index"/>
+            <input_port name="steps"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+

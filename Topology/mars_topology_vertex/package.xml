@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_topology_vertex</name>
+  <version>0.1.0</version>
+  <description>The mars_topology_vertex package</description>
+
+  <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+
+  <license>TODO</license>
+
+  <author email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>mars_common</depend>
+  <depend>actionlib</depend>
+  <depend>mars_topology_common</depend>
+  <depend>mars_topology_msgs</depend>
+  <depend>mars_topology_srvs</depend>
+  <depend>mars_topology_actions</depend>
+  <depend>actionlib_msgs</depend>
+
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>mars_topology_srvs</test_depend>
+  <test_depend>mars_common</test_depend>
+  <test_depend>mars_topology_common</test_depend>
+</package>

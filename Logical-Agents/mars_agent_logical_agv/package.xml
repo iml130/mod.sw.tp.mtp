@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_agent_logical_agv</name>
+  <version>0.1.0</version>
+  <description>The mars_agent_logical_robot package</description>
+
+  <maintainer email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</maintainer>
+
+  <license>TODO</license>
+
+  <author email="dennis.luensch@iml.fraunhofer.de">Dennis Luensch</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>mars_common</depend>
+  <depend>mars_routing_common</depend>
+  <depend>mars_agent_logical_srvs</depend>
+  <depend>mars_agent_logical_common</depend>
+  <depend>behaviortree_cpp_v3</depend>
+</package>

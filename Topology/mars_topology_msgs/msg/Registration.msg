@@ -1,0 +1,6 @@
+# supported registration actions
+uint8 REGISTRATION_ACTION_REGISTER=0
+uint8 REGISTRATION_ACTION_UNREGISTER=1
+
+mars_topology_msgs/TopologyEntity entity
+uint8 registration_action

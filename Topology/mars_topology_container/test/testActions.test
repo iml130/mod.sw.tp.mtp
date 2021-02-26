@@ -1,0 +1,7 @@
+<launch>
+<node name="container_afd0b036625a3aa8b6399dc8c8fff0ff" pkg="mars_topology_container" type="mars_topology_container" ns="topology" output="screen">
+<rosparam command="load" file="$(find mars_topology_container)/config/TestContainer.yaml"/>
+</node>
+
+<test test-name="mars_topology_container_container_action_test" pkg="mars_topology_container" type="mars_topology_container_container_action_test" time-limit="10000.0"/>
+</launch>

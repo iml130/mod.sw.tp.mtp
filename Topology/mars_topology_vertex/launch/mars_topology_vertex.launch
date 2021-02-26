@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- mars_topology_vertex node -->
+  <node name="vertex_be616f504783457fb59b2b6d8dd7b469" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology"  output="screen">
+
+    <!-- Node settings -->
+    <!-- log level can be 'debug', 'info', 'warn', 'error' or 'fatal' -->
+    <param name="log_level" value="info" />
+    <param name="node_rate" value="10" />
+
+    <!-- General params of a mars entity -->
+    <param name="id" value="be616f50-4783-457f-b59b-2b6d8dd7b469" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="2" />
+    <param name="y_pos" value="2" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />    
+    <rosparam param="footprint_x">[1, 3, 3, 1]</rosparam>
+    <rosparam param="footprint_y">[1, 1, 3, 3]</rosparam>
+    <!-- TOPOLOGY_VERTEX_TYPE_WAYPOINT : 10 -->
+    <param name="type" value="10" />
+
+    <!-- Restrictions -->
+    <param name="maximum_linear_velocity" value="1.1" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+
+    <!-- Vertex specific params -->
+    <rosparam param="ingoing_edge_ids">[]</rosparam>
+    <rosparam param="outgoing_edge_ids">[]</rosparam>
+
+    <!-- Name of the service to get the coordinates of the edge, in this case the mid point-->
+    <!-- param name="service_name_get_coordinate" value="get_coordinate" / -->
+    <!-- param name="service_name_get_footprint" value="get_footprint" / -->
+    <!-- param name="service_name_lock" value="lock" / -->
+    <!-- param name="service_name_unlock" value="unlock" / -->
+    <!-- param name="service_name_add_reservation" value="add_reservation" / -->
+    <!-- param name="service_name_deallocate" value="deallocate" / -->
+    <!-- param name="service_name_delete_reservation" value="delete_reservation" / -->
+    <!-- param name="service_name_get_free_time_slots" value="get_free_time_slots" / -->
+    <!-- param name="service_name_get_ingoing_edges" value="get_ingoing_edges" / -->
+    <!-- param name="service_name_get_outgoing_edges" value="get_outgoing_edges" / -->
+    <!-- param name="service_name_get_restrictions" value="get_restrictions" / -->
+    <!-- param name="service_name_get_type" value="get_type" / -->
+  </node>
+</launch>

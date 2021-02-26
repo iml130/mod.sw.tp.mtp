@@ -1,0 +1,3 @@
+<launch>
+    <test test-name="mars_topology_common_topology_entity_test" pkg="mars_topology_common" type="mars_topology_common-topology-entity-test" time-limit="1000.0"/>
+</launch>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="vertex_00000000000000000000000000000010" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="100" />
+    <param name="id" value="00000000-0000-0000-0000-000000000010" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="0" />
+    <param name="y_pos" value="0" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="10" />
+    <rosparam param="ingoing_edge_ids">[]</rosparam>
+    <rosparam param="outgoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+  </node>
+  <node name="vertex_00000000000000000000000000000001" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="100" />
+    <param name="id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="description" value="test_vertex_1" />
+    <param name="x_pos" value="20" />
+    <param name="y_pos" value="0" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />    
+    <rosparam param="footprint_x">[-2.0, 2.0, 2.0, -2.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="10" />
+    <rosparam param="ingoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+    <rosparam param="outgoing_edge_ids">[]</rosparam>
+  </node>
+  <node name="edge_00000000000000000000000000000002" pkg="mars_topology_edge" type="mars_topology_edge" ns="topology" output="screen">
+    <param name="log_level" value="debug" />    
+    <param name="node_rate" value="100" />
+    <param name="drawing_rate" value="0.1" />
+    <param name="id" value="00000000-0000-0000-0000-000000000002" />
+    <param name="description" value="test_edge_0" />
+    <param name="x_pos" value="10" />
+    <param name="y_pos" value="0" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-8.0, 8.0, 8.0, -8.0]</rosparam>
+    <rosparam param="footprint_y">[2.0, 2.0, -2.0, -2.0]</rosparam>
+    <param name="type" value="100" />
+    <param name="origin_id" value="00000000-0000-0000-0000-000000000010" />
+    <param name="destination_id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="length" value="16.0" />
+    <param name="direction" value="0" />
+  </node>
+
+  <test test-name="mars_routing_plugin_carp_route_2x1_test" pkg="mars_routing_plugin_carp" type="mars_routing_plugin_carp-route-2x1-test" />
+</launch>

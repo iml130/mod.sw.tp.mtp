@@ -1,0 +1,28 @@
+<launch>
+    <master auto="start"/>
+    <param name="/use_sim_time" value="true"/>
+
+    <!--  ****** Maps *****  -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find mars_simulation_data)/world/haier_hall.yaml">
+        <param name="frame_id" value="/map"/>
+    </node>
+
+    <!-- RVIZ -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mars_simulation)/rviz/haier_simulation.rviz" />
+
+    <node pkg="mars_simulation_stage_ros" type="mars_simulation_stage_ros" name="mars_simulation_stage_ros" args="$(find mars_simulation_data)/world/haier_hall.world" respawn="false">
+        <param name="base_watchdog_timeout" value="0.2"/>
+    </node>
+
+    <!--mars_topology_container node 1-->
+    <node name="container_00000000000000000000000000000001" pkg="mars_topology_container" type="mars_topology_container" ns="topology" output="screen">
+        <!-- Prameters as YAML file -->
+        <rosparam command="load" file="$(find mars_topology_container)/config/topologyContainer1.yaml" />
+    </node>
+    
+    <!--mars_topology_container node 2-->
+    <node name="container_00000000000000000000000000000002" pkg="mars_topology_container" type="mars_topology_container" ns="topology" output="screen">
+        <!-- Parameters as YAML file-->
+        <rosparam command="load" file="$(find mars_topology_container)/config/topologyContainer2.yaml"/>
+    </node>
+</launch>

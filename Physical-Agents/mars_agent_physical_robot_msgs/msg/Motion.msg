@@ -1,0 +1,2 @@
+geometry_msgs/PoseStamped current_position
+geometry_msgs/Twist current_velocity

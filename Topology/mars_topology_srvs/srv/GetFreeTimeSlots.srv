@@ -1,0 +1,6 @@
+# time from which free time windows has to be searched.
+time start_time
+mars_common_msgs/Id entity_id
+---
+# Contains free time intervals if intervals from the start time can be created
+mars_topology_msgs/TimeInterval[] time_interval

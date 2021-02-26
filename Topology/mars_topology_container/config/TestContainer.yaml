@@ -1,0 +1,48 @@
+container_id: "afd0b036625a3aa8b6399containerID"
+container_description: "container0.0"
+container:
+    - entity_type: "vertex"
+      id: "afd0b036625a3aa8b000000Vertex0.0"
+      description: "vertex0.0"
+      x_pos: 27.8
+      y_pos: 5.0
+      is_locked: false
+      frame_id: "map"
+      footprint_x: [25.3, 25.3, 30.3, 30.3]
+      footprint_y: [3.0, 7.0, 7.0, 3.0]
+      type: 10
+      maximum_linear_velocity: 10.0
+      maximum_angular_velocity: 1.0
+      maximum_linear_acceleration: 1.0
+      maximum_angular_acceleration: 0.5
+      maximum_height: 2.0
+      maximum_total_weight: 200.0
+      forbidden_vehicle_types: []
+      forbidden_hazard_types: []
+      ingoing_edges: ["00112233445566778899aabbccddeeff", "10112233445566778899aabbccddeeff"]
+      ingoing_container_ids: ["0000000000000003","0000000000000003"]
+      outgoing_edges: ["20112233445566778899aabbccddeeff", "30112233445566778899aabbccddeefg"]
+      outgoing_container_ids: ["0000000000000003",""]
+
+    # - entity_type: "vertex"
+    #   id: "00000000000000000000000000000001"
+    #   description: "vertex01"
+    #   x_pos: 1.0
+    #   y_pos: 1.0
+    #   is_locked: false
+    #   frame_id: "map"
+    #   footprint_x: [14.7,14.7 , 9.7, 9.7]
+    #   footprint_y: [7.0, 3.0, 3.0, 7.0]
+    #   type: 10
+    #   maximum_linear_velocity: 10.0
+    #   maximum_angular_velocity: 1.0
+    #   maximum_linear_acceleration: 1.0
+    #   maximum_angular_acceleration: 0.5
+    #   maximum_height: 2.0
+    #   maximum_total_weight: 200.0
+    #   forbidden_vehicle_types: []
+    #   forbidden_hazard_types: []
+    #   ingoing_edges: ["00112233445566778899aabbccddeeff", "10112233445566778899aabbccddeeff"]
+    #   ingoing_container_ids: ["0000000000000003","0000000000000003"]
+    #   outgoing_edges: ["20112233445566778899aabbccddeeff", "30112233445566778899aabbccddeefg"]
+    #   outgoing_container_ids: ["0000000000000003",""]

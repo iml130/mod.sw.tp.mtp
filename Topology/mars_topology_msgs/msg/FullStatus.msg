@@ -1,0 +1,5 @@
+mars_common_msgs/Id entity_id
+mars_topology_msgs/TopologyEntityType type
+geometry_msgs/PointStamped point
+mars_topology_msgs/Lock[] locks
+mars_topology_msgs/Reservation[] reservations

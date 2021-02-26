@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+ 
+ <!-- Log level of the node. Possible log levels are: debug, info, warn, error, fatal-->
+ <arg name="log_level" default="info" />
+ <arg name="output_type" default="screen" />
+ <arg name="visualization" default="true" />
+
+ <node name="carp_11111111111111111111111111111111" pkg="mars_routing_base" type="mars_routing_base_node" output="$(arg output_type)" ns="mars/routing">
+
+    <param name="log_level" value="$(arg log_level)" />
+    <param name="node_rate" value="10" />
+
+    <!-- Router Plugin -->
+    <param name="plugin_name" value="marsRoutingPlugin/Carp"/>
+
+    <param name="topology_namespace" value="/topology"/>
+    
+    <!-- Visualization -->
+    <param name="route_visualization" value="$(arg visualization)" />
+
+
+    <rosparam file="$(find mars_routing_base)/config/Router/carp_plugin_params.yaml" command="load" />
+ </node>
+</launch>

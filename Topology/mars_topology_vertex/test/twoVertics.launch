@@ -1,0 +1,35 @@
+<launch>
+
+<node name="vertex_1950225e86e33e1394c61c4fa5bcafe4" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="1950225e-86e3-3e13-94c6-1c4fa5bcafe4" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[-4.0, 0.0, 0.0, -4.0]</rosparam>
+    <rosparam param="footprint_y">[4.0, 4.0, 0.0, 0.0]</rosparam>
+    <param name="type" value="10" />
+    <rosparam param="ingoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+    <rosparam param="outgoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+  </node>
+
+<node name="vertex_1950225e86e33e1394c61c4fa5bcafe5" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+    <param name="id" value="1950225e-86e3-3e13-94c6-1c4fa5bcafe5" />
+    <param name="description" value="test_vertex_0" />
+    <param name="x_pos" value="4" />
+    <param name="y_pos" value="5" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[2.0, 2.0, 0.0, 0.0]</rosparam>
+    <rosparam param="footprint_y">[0.0, -2.0, -2.0, 0.0]</rosparam>
+    <param name="type" value="10" />
+    <rosparam param="ingoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+    <rosparam param="outgoing_edge_ids">["00000000-0000-0000-0000-000000000002"]</rosparam>
+  </node>
+
+</launch>

@@ -1,0 +1,4 @@
+mars_common_msgs/Id entity_id
+---
+# length of an mars graph edge in meter
+float32 length

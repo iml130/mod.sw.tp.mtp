@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="vertex_00000000000000000000000000000001" pkg="mars_topology_vertex" type="mars_topology_vertex" ns="topology" output="screen">
+    <param name="log_level" value="debug" />
+    <param name="node_rate" value="10" />
+
+    <param name="id" value="00000000-0000-0000-0000-000000000001" />
+    <param name="description" value="test_vertex_1" />
+    <param name="x_pos" value="1.337" />
+    <param name="y_pos" value="-1.337" />
+    <param name="is_locked" value="false" />
+    <param name="frame_id" value="map" />
+    <rosparam param="footprint_x">[11.0, 15.0, 3.0]</rosparam>
+    <rosparam param="footprint_y">[2, 3, 7]</rosparam>
+    <param name="type" value="10" />
+
+    <param name="maximum_linear_velocity" value="10" />
+    <param name="maximum_angular_velocity" value="1" />
+    <param name="maximum_linear_acceleration" value="1" />
+    <param name="maximum_angular_acceleration" value="0.5" />
+    <param name="maximum_height" value="2" />
+    <param name="maximum_total_weight" value="200" />
+    <rosparam param="forbidden_vehicle_types">[]</rosparam>
+    <rosparam param="forbidden_hazard_types">[]</rosparam>
+
+    <rosparam param="ingoing_edge_ids">[]</rosparam>
+    <rosparam param="outgoing_edge_ids">[]</rosparam>
+  </node>
+
+  <test test-name="mars_routing_common_topology_vertex_test" pkg="mars_routing_common" type="mars_routing_common-topology-vertex-test" />
+</launch>

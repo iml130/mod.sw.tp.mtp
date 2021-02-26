@@ -1,0 +1,5 @@
+<library path="lib/libmars_routing_plugin_carp">
+  <class name="marsRoutingPlugin/Carp" type="mars::routing::plugin::carp::Router" base_class_type="mars::routing::core::Router">
+    <description>This is a router plugin.</description>
+  </class>
+</library>

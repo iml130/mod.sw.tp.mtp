@@ -1,0 +1,5 @@
+mars_common_msgs/Id entity_id
+---
+# Array of all traversable edges.
+mars_common_msgs/Id[] outgoing_edges_ids
+mars_common_msgs/Id[] outgoing_container_ids

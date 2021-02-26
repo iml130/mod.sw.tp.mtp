@@ -1,0 +1,5 @@
+# The servie order to add
+mars_agent_logical_msgs/ServiceOrder service_order
+---
+# Returns true if no error occurs
+mars_common_msgs/Result result

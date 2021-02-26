@@ -1,0 +1,49 @@
+container_id: "00000000000000000000000000000002"
+container:
+    - entity_type: "edge"
+      id: "edge2233445566778899aabbccddeefq"
+      description: "edge2.0"
+      type: 100
+      is_locked: false
+      frame_id: "/map"
+      x_pos: 37.8
+      y_pos: 5.0
+      footprint_x: [30.6, 30.6, 35.6, 35.6, 40.6, 40.6]
+      footprint_y: [3.0, 7.0, 7.0, 11.0, 11.0, 3.0]
+      origin_id: "0000000000000002"
+      origin_container_id: "00000000000000000000000000000001"
+      destination_id: "0000000000000004"
+      destination_container_id: "00000000000000000000000000000002"
+      direction: 2
+      length: 10.0
+      maximum_linear_velocity: 10.0
+      maximum_angular_velocity: 1.0
+      maximum_linear_acceleration: 1.0
+      maximum_angular_acceleration: 0.5
+      maximum_height: 2.0
+      maximum_total_weight: 200.0
+      forbidden_vehicle_types: []
+      forbidden_hazard_types: []
+
+    - entity_type: "vertex"
+      id: "0000000000000004"
+      description: "vertex2.0"
+      x_pos: 37.8
+      y_pos: 13.8
+      is_locked: false
+      frame_id: "/map"
+      footprint_x: [35.6, 35.6, 40.6, 40.6]
+      footprint_y: [11.3, 15.3, 15.3, 11.3]
+      type: 10
+      maximum_linear_velocity: 10.0
+      maximum_angular_velocity: 1.0
+      maximum_linear_acceleration: 1.0
+      maximum_angular_acceleration: 0.5
+      maximum_height: 2.0
+      maximum_total_weight: 200.0
+      forbidden_vehicle_types: []
+      forbidden_hazard_types: []
+      ingoing_edges: ["00112233445566778899aabbccddeef4", "10112233445566778899aabbccddeef5"]
+      ingoing_container_ids: ["",""]
+      outgoing_edges: ["20112233445566778899aabbccddeef4", "30112233445566778899aabbccddee5g"]
+      outgoing_container_ids: ["",""]

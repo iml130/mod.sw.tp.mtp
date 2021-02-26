@@ -1,0 +1,19 @@
+# id of the initiatior who wants to lock the topology entity
+mars_common_msgs/Id initiator_id
+# optional reason (for logging)
+string reason
+# The interval for the period from where the topology entity shoud be locked
+mars_topology_msgs/TimeInterval time_interval
+# If 'true' reservations will be overwritten and planned path must be replanned
+# (Not supported in MARS V1).If 'false' the time interval can be shifted to a 
+# fitting position. If a shift is necessary it will always be into the future.
+bool overwrite_reservations
+mars_common_msgs/Id entity_id
+---
+# Same as the requested time interval if overwrite_reservations was set to true. 
+# Otherwise the time interval can be shifted.
+mars_topology_msgs/TimeInterval confirmed_time_interval
+# True if no error occours
+mars_common_msgs/Result result
+# Id of the lock. Needed if you want to delete the lock.
+mars_common_msgs/Id lock_id

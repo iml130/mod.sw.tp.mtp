@@ -1,0 +1,6 @@
+mars_common_msgs/Id current_task_id
+mars_common_msgs/Id current_motion_id
+mars_common_msgs/Id current_action_id
+mars_common_msgs/Id last_finished_motion
+mars_common_msgs/Id last_finished_action
+geometry_msgs/PolygonStamped footprint
