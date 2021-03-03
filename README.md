@@ -139,9 +139,6 @@ For handling errors, if the RAN agent e.g. is a vehicle, the logical agent conti
   * visualization-msgs
   * move-base-msgs
   * behaviortree-cpp-v3 (version 3.5.1)
-* (Docker and docker-compose - in case you want to have an easy life ;))
-* Understanding defining material flows based on [lotlan](https://lotlan.readthedocs.io/en/latest/)
-
 
 ## Install
 You have to do the following steps:
@@ -348,7 +345,7 @@ In the following all messages will be explained which are send by the TP. Messag
 
 #### MotionAssignment.msg
 
-The motion assignment tells the AGV the next destionation and under which circumstances it can moves to this position.
+The motion assignment tells the AGV the next destination and under which circumstances it can moves to this position.
 
 | Type                         | Variable         | Description                                                                                                                                                                                                       |
 | ---------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
